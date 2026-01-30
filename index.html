@@ -171,11 +171,12 @@
             const heading = event.alpha;
             const rotation = targetBearing - heading;
             lastRotation += (rotation - lastRotation) * 0.3; // smooth
-            document.getElementById('arrow').style.transform = `translateX(-50%) rotate(${lastRotation}deg)`;
+            document.getElementById('arrow').style.transform = `translateX(-50%) rotate(${lastRotation + 180}deg)`;
         }
     </script>
 </body>
 </html>
+
 
 
 
