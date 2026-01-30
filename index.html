@@ -3,157 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Temple Direction Pointer</title>
+    <title>Turn Your Heart to the Temple</title>
     <style>
-        body { 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-            background-color: #f0f0f0; 
-            font-family: Arial, sans-serif; 
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Georgia', serif;
+            color: #fff;
+            background: url('temple.png') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
         }
-        #arrow { 
-            width: 0; 
-            height: 0; 
-            border-left: 50px solid transparent; 
-            border-right: 50px solid transparent; 
-            border-bottom: 100px solid blue; 
-            transition: transform 0.1s; 
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 50, 0.4); /* Dark blue tint for readability & mood */
+            z-index: 1;
         }
-        #message { 
-            margin-top: 20px; 
-            font-size: 20px; 
-            text-align: center; 
+        .content {
+            position: relative;
+            z-index: 2;
+            max-width: 90%;
+            padding: 20px;
         }
-        #distance { 
-            margin-top: 10px; 
-            font-size: 16px; 
+        h1 {
+            font-size: 2.5em;
+            margin: 0.5em 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+        p {
+            font-size: 1.2em;
+            margin: 1em 0;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+        #arrow {
+            width: 0;
+            height: 0;
+            border-left: 80px solid transparent;
+            border-right: 80px solid transparent;
+            border-bottom: 160px solid #ffd700; /* Gold arrow for sacred feel */
+            margin: 40px auto;
+            transition: transform 0.3s ease-out;
+            filter: drop-shadow(0 0 10px rgba(255,215,0,0.7));
+            z-index: 3;
+        }
+        #christ-welcome {
+            max-width: 300px;
+            margin: 20px auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            z-index: 2;
+        }
+        #message, #distance {
+            font-size: 1.3em;
+            margin: 15px 0;
+        }
+        .note {
+            font-size: 0.9em;
+            color: #ddd;
+            margin-top: 40px;
         }
     </style>
 </head>
 <body>
-    <h1>Turn Your Heart to the Temple</h1>
+    <div class="overlay"></div>
     
-    <p style="text-align: center; max-width: 600px; margin: 0 auto 20px;">
-        Allow location and motion access when prompted.<br>
-        Rotate your phone slowly—the arrow will point toward the Fort Worth Texas Temple in Burleson, Texas.<br>
-        Let this remind us to always keep our sights and hearts on the house of the Lord.
-    </p>
-    
-    <div id="arrow" style="
-        width: 0; 
-        height: 0; 
-        border-left: 60px solid transparent; 
-        border-right: 60px solid transparent; 
-        border-bottom: 120px solid #0033A0;  /* LDS blue */
-        margin: 40px auto;
-        transition: transform 0.2s ease-out;
-    "></div>
-    
-    <div id="message" style="font-size: 1.2em; margin: 20px; text-align: center;">
-        Waiting for location and orientation data...
+    <div class="content">
+        <h1>Turn Your Heart to the Temple</h1>
+        
+        <p>Allow location and motion access.<br>Rotate your phone—the golden arrow will guide your gaze toward the Fort Worth Texas Temple.</p>
+        
+        <img id="christ-welcome" src="images/christ-welcome.png" alt="Jesus Christ welcoming at the temple door">
+        
+        <div id="arrow"></div>
+        
+        <div id="message">Waiting for location and orientation...</div>
+        <div id="distance"></div>
+        
+        <p class="note">On iPhone: Settings → Safari → Motion & Orientation Access (ON). Move phone in figure-8 to calibrate if needed.<br>Let this direction remind us to always turn toward the Savior and His holy house.</p>
     </div>
-    
-    <div id="distance" style="font-size: 1.1em; text-align: center; color: #333;"></div>
-    
-    <p style="font-size: 0.9em; color: #666; text-align: center; margin-top: 40px;">
-        <strong>Note for iPhone users:</strong> Go to Settings → Safari → turn on "Motion & Orientation Access".<br>
-        If the arrow doesn't move, try moving your phone in a figure-8 pattern to calibrate the compass.
-    </p>
 
     <script>
-const templeLat = 32.5123;   // Fort Worth Texas Temple
-const templeLng = -97.3612;
+        const templeLat = 32.5123;
+        const templeLng = -97.3612;
 
-let userLat, userLng, targetBearing;
+        let userLat, userLng, targetBearing;
 
-function toRadians(deg) { return deg * Math.PI / 180; }
-function toDegrees(rad) { return rad * 180 / Math.PI; }
+        function toRadians(deg) { return deg * Math.PI / 180; }
+        function toDegrees(rad) { return rad * 180 / Math.PI; }
 
-// Bearing calculation (from user to temple)
-function calculateBearing(lat1, lon1, lat2, lon2) {
-    const dLon = toRadians(lon2 - lon1);
-    lat1 = toRadians(lat1);
-    lat2 = toRadians(lat2);
-    const y = Math.sin(dLon) * Math.cos(lat2);
-    const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
-    let brng = toDegrees(Math.atan2(y, x));
-    return (brng + 360) % 360;
-}
+        function calculateBearing(lat1, lon1, lat2, lon2) {
+            const dLon = toRadians(lon2 - lon1);
+            lat1 = toRadians(lat1);
+            lat2 = toRadians(lat2);
+            const y = Math.sin(dLon) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+            let brng = toDegrees(Math.atan2(y, x));
+            return (brng + 360) % 360;
+        }
 
-// Distance in miles
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 3958.8; // Earth radius in miles
-    const dLat = toRadians(lat2 - lat1);
-    const dLon = toRadians(lon2 - lon1);
-    lat1 = toRadians(lat1);
-    lat2 = toRadians(lat2);
-    const a = Math.sin(dLat/2)**2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon/2)**2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-}
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 3958.8;
+            const dLat = toRadians(lat2 - lat1);
+            const dLon = toRadians(lon2 - lon1);
+            lat1 = toRadians(lat1);
+            lat2 = toRadians(lat2);
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon/2)**2;
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
 
-// Get location
-if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-        userLat = pos.coords.latitude;
-        userLng = pos.coords.longitude;
-        targetBearing = calculateBearing(userLat, userLng, templeLat, templeLng);
-        const dist = calculateDistance(userLat, userLng, templeLat, templeLng).toFixed(1);
-        document.getElementById('distance').textContent = `The temple is about ${dist} miles from you.`;
-        document.getElementById('message').textContent = 'Rotate your phone to point toward the temple.';
-        initOrientation();
-    }, err => {
-        alert('Location access denied or unavailable. The direction won’t work without it.');
-    }, { enableHighAccuracy: true });
-} else {
-    alert('Geolocation not supported.');
-}
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                userLat = pos.coords.latitude;
+                userLng = pos.coords.longitude;
+                targetBearing = calculateBearing(userLat, userLng, templeLat, templeLng);
+                const dist = calculateDistance(userLat, userLng, templeLat, templeLng).toFixed(1);
+                document.getElementById('distance').textContent = `≈ ${dist} miles away`;
+                document.getElementById('message').textContent = 'Rotate your phone toward the temple';
+                initOrientation();
+            }, err => {
+                document.getElementById('message').textContent = 'Location needed – please allow access';
+            }, { enableHighAccuracy: true });
+        }
 
-// Orientation setup with permission request
-function initOrientation() {
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-        // iOS 13+ permission
-        DeviceOrientationEvent.requestPermission()
-            .then(permission => {
-                if (permission === 'granted') {
-                    window.addEventListener('deviceorientation', handleOrientation, true);
-                } else {
-                    alert('Motion & orientation permission denied. The arrow won’t rotate. Try Settings > Safari > Motion & Orientation Access.');
-                }
-            })
-            .catch(err => alert('Permission request failed: ' + err.message));
-    } else {
-        // Android/non-iOS
-        window.addEventListener('deviceorientation', handleOrientation, true);
-    }
-}
+        function initOrientation() {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(perm => {
+                        if (perm === 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                        } else {
+                            document.getElementById('message').textContent = 'Motion access denied – arrow won’t rotate';
+                        }
+                    });
+            } else {
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
+        }
 
-let lastRotation = 0; // For smoothing
-function handleOrientation(event) {
-    if (targetBearing === undefined) return;
-
-    let heading = event.alpha; // 0-360, where 0 is north
-    if (heading === null) {
-        document.getElementById('message').textContent = 'No compass data. Try moving phone in figure-8 pattern (iOS calibration).';
-        return;
-    }
-
-    // Use absolute if available, else relative
-    if (event.absolute === false || event.absolute === undefined) {
-        // Some browsers need calibration hint
-    }
-
-    const rotation = targetBearing - heading;
-    // Smooth rotation
-    lastRotation += (rotation - lastRotation) * 0.3;
-    document.getElementById('arrow').style.transform = `rotate(${lastRotation}deg)`;
-}
+        let lastRotation = 0;
+        function handleOrientation(event) {
+            if (targetBearing === undefined || event.alpha === null) return;
+            const heading = event.alpha;
+            const rotation = targetBearing - heading;
+            lastRotation += (rotation - lastRotation) * 0.3;
+            document.getElementById('arrow').style.transform = `rotate(${lastRotation}deg)`;
+        }
     </script>
 </body>
 </html>
-
-
