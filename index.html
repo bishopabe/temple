@@ -49,19 +49,17 @@
             text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
         }
         #arrow {
-            width: 0;
-            height: 0;
-            border-left: 40px solid transparent;
-            border-right: 40px solid transparent;
-            border-bottom: 80px solid #ffd700; /* gold arrow */
+            font-size: 120px;                     /* Adjust size as needed */
+            color: #ffd700;                       /* gold */
             position: absolute;
-            bottom: 100px;                    /* Adjust this value to move arrow up/down */
+            bottom: 100px;
             left: 50%;
             transform: translateX(-50%) rotate(0deg);
             transition: transform 0.3s ease-out;
-            filter: drop-shadow(0 0 15px rgba(255,215,0,0.8));
+            filter: drop-shadow(0 0 10px rgba(255,215,0,0.8));
             z-index: 3;
-        }
+            line-height: 1;                       /* tight spacing */
+}
         #message, #distance {
             font-size: 1.4em;
             margin: 20px 0;
@@ -89,7 +87,7 @@
             Fort Worth Texas Temple in Burleson.
         </p> -->
 
-        <div id="arrow"></div>
+        <div id="arrow">➤</div>
 
         <div id="message">Waiting for location and orientation data...</div>
         <div id="distance"></div>
@@ -178,6 +176,7 @@
     </script>
 </body>
 </html>
+
 
 
 
