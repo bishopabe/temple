@@ -6,67 +6,100 @@
     <title>Turn Your Heart to the Temple</title>
     <style>
         body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Georgia', serif;
-    color: #fff;
-    background: url('temple.png') no-repeat center center fixed;
-    background-size: cover;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;          /* Centers horizontally */
-    justify-content: space-between; /* Pushes content to top and bottom */
-    text-align: center;
-    position: relative;
-}
-
-.content {
-    flex: 1;                      /* Takes available space in middle */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;      /* Keeps h1, p, christ image centered vertically */
-    padding: 20px;
-    z-index: 2;
-}
-
-/* Arrow near bottom center */
-#arrow {
-    width: 0;
-    height: 0;
-    border-left: 80px solid transparent;
-    border-right: 80px solid transparent;
-    border-bottom: 160px solid #ffd700;
-    margin: 20px auto 60px auto;   /* Adds bottom margin to lift it off the very edge */
-    transition: transform 0.3s ease-out;
-    filter: drop-shadow(0 0 10px rgba(255,215,0,0.7));
-    z-index: 3;
-}
-
-/* Optional: Make sure the note stays near bottom if needed */
-.note {
-    margin-top: auto;             /* Pushes note to bottom if content is short */
-    padding-bottom: 20px;
+            margin: 0;
+            padding: 0;
+            font-family: 'Georgia', serif;
+            color: #fff;
+            background: url('temple.png') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: center;
+        }
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 50, 0.4); /* Dark blue tint for readability */
+            z-index: 1;
+        }
+        .content {
+            position: relative;
+            z-index: 2;
+            max-width: 90%;
+            padding: 40px 20px 20px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        h1 {
+            font-size: 2.8em;
+            margin: 0.4em 0 0.6em 0;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+        }
+        p.instruction {
+            font-size: 1.3em;
+            margin: 1em 0 2em 0;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+        }
+        #arrow {
+            width: 0;
+            height: 0;
+            border-left: 80px solid transparent;
+            border-right: 80px solid transparent;
+            border-bottom: 160px solid #ffd700; /* gold arrow */
+            position: absolute;
+            bottom: 100px;                    /* Adjust this value to move arrow up/down */
+            left: 50%;
+            transform: translateX(-50%) rotate(0deg);
+            transition: transform 0.3s ease-out;
+            filter: drop-shadow(0 0 15px rgba(255,215,0,0.8));
+            z-index: 3;
+        }
+        #message, #distance {
+            font-size: 1.4em;
+            margin: 20px 0;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+        .note {
+            font-size: 1em;
+            color: #ddd;
+            margin-top: auto;
+            padding: 20px 0 40px 0;
+            max-width: 80%;
+            line-height: 1.5;
         }
     </style>
 </head>
 <body>
     <div class="overlay"></div>
-    
+
     <div class="content">
         <h1>Turn Your Heart to the Temple</h1>
         
-        <!-- <p>Allow location and motion access.<br>Rotate your phone—the golden arrow will guide your gaze toward the Fort Worth Texas Temple.</p> -->
-        
+        <p class="instruction">
+            Allow location and motion access when prompted.<br>
+            Rotate your phone slowly — the golden arrow will point toward the<br>
+            Fort Worth Texas Temple in Burleson.
+        </p>
+
         <div id="arrow"></div>
-        
-        <div id="message">Waiting for location and orientation...</div>
+
+        <div id="message">Waiting for location and orientation data...</div>
         <div id="distance"></div>
-        
-        <p class="note">On iPhone: Settings → Safari → Motion & Orientation Access (ON). Move phone in figure-8 to calibrate if needed.<br>Let this direction remind us to always turn toward the Savior and His holy house.</p>
     </div>
+
+    <p class="note">
+        <strong>Note for iPhone users:</strong> Go to Settings → Safari → turn on "Motion & Orientation Access".<br>
+        If the arrow doesn't respond, try moving your phone in a figure-8 pattern to calibrate the compass.<br><br>
+        Let this direction remind us to always turn our hearts and eyes toward the house of the Lord.
+    </p>
 
     <script>
         const templeLat = 32.5123;
@@ -88,7 +121,7 @@
         }
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 3958.8;
+            const R = 3958.8; // Earth radius in miles
             const dLat = toRadians(lat2 - lat1);
             const dLon = toRadians(lon2 - lon1);
             lat1 = toRadians(lat1);
@@ -108,19 +141,25 @@
                 document.getElementById('message').textContent = 'Rotate your phone toward the temple';
                 initOrientation();
             }, err => {
-                document.getElementById('message').textContent = 'Location needed – please allow access';
+                document.getElementById('message').textContent = 'Location access needed — please allow it';
             }, { enableHighAccuracy: true });
+        } else {
+            document.getElementById('message').textContent = 'Geolocation not supported by this browser';
         }
 
         function initOrientation() {
             if (typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission()
-                    .then(perm => {
-                        if (perm === 'granted') {
+                    .then(permission => {
+                        if (permission === 'granted') {
                             window.addEventListener('deviceorientation', handleOrientation);
                         } else {
-                            document.getElementById('message').textContent = 'Motion access denied – arrow won’t rotate';
+                            document.getElementById('message').textContent = 'Motion permission denied — arrow won’t rotate';
                         }
+                    })
+                    .catch(err => {
+                        document.getElementById('message').textContent = 'Error requesting motion permission';
+                        console.error(err);
                     });
             } else {
                 window.addEventListener('deviceorientation', handleOrientation);
@@ -130,14 +169,12 @@
         let lastRotation = 0;
         function handleOrientation(event) {
             if (targetBearing === undefined || event.alpha === null) return;
+
             const heading = event.alpha;
             const rotation = targetBearing - heading;
-            lastRotation += (rotation - lastRotation) * 0.3;
-            document.getElementById('arrow').style.transform = `rotate(${lastRotation}deg)`;
+            lastRotation += (rotation - lastRotation) * 0.3; // smooth
+            document.getElementById('arrow').style.transform = `translateX(-50%) rotate(${lastRotation}deg)`;
         }
     </script>
 </body>
 </html>
-
-
-
