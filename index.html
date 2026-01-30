@@ -35,9 +35,34 @@
     </style>
 </head>
 <body>
-    <div id="arrow"></div>
-    <div id="message">Turn your sights to the temple</div>
-    <div id="distance"></div>
+    <h1>Turn Your Heart to the Temple</h1>
+    
+    <p style="text-align: center; max-width: 600px; margin: 0 auto 20px;">
+        Allow location and motion access when prompted.<br>
+        Rotate your phone slowly—the arrow will point toward the Fort Worth Texas Temple in Burleson, Texas.<br>
+        Let this remind us to always keep our sights and hearts on the house of the Lord.
+    </p>
+    
+    <div id="arrow" style="
+        width: 0; 
+        height: 0; 
+        border-left: 60px solid transparent; 
+        border-right: 60px solid transparent; 
+        border-bottom: 120px solid #0033A0;  /* LDS blue */
+        margin: 40px auto;
+        transition: transform 0.2s ease-out;
+    "></div>
+    
+    <div id="message" style="font-size: 1.2em; margin: 20px; text-align: center;">
+        Waiting for location and orientation data...
+    </div>
+    
+    <div id="distance" style="font-size: 1.1em; text-align: center; color: #333;"></div>
+    
+    <p style="font-size: 0.9em; color: #666; text-align: center; margin-top: 40px;">
+        <strong>Note for iPhone users:</strong> Go to Settings → Safari → turn on "Motion & Orientation Access".<br>
+        If the arrow doesn't move, try moving your phone in a figure-8 pattern to calibrate the compass.
+    </p>
 
     <script>
 const templeLat = 32.5123;   // Fort Worth Texas Temple
@@ -130,4 +155,5 @@ function handleOrientation(event) {
     </script>
 </body>
 </html>
+
 
