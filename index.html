@@ -6,69 +6,49 @@
     <title>Turn Your Heart to the Temple</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Georgia', serif;
-            color: #fff;
-            background: url('temple.png') no-repeat center center fixed;
-            background-size: cover;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-        }
-        .overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 50, 0.4); /* Dark blue tint for readability & mood */
-            z-index: 1;
-        }
-        .content {
-            position: relative;
-            z-index: 2;
-            max-width: 90%;
-            padding: 20px;
-        }
-        h1 {
-            font-size: 2.5em;
-            margin: 0.5em 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-        }
-        p {
-            font-size: 1.2em;
-            margin: 1em 0;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-        }
-        #arrow {
-            width: 0;
-            height: 0;
-            border-left: 80px solid transparent;
-            border-right: 80px solid transparent;
-            border-bottom: 160px solid #ffd700; /* Gold arrow for sacred feel */
-            margin: 40px auto;
-            transition: transform 0.3s ease-out;
-            filter: drop-shadow(0 0 10px rgba(255,215,0,0.7));
-            z-index: 3;
-        }
-        #christ-welcome {
-            max-width: 300px;
-            margin: 20px auto;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-            z-index: 2;
-        }
-        #message, #distance {
-            font-size: 1.3em;
-            margin: 15px 0;
-        }
-        .note {
-            font-size: 0.9em;
-            color: #ddd;
-            margin-top: 40px;
+    margin: 0;
+    padding: 0;
+    font-family: 'Georgia', serif;
+    color: #fff;
+    background: url('temple.png') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;          /* Centers horizontally */
+    justify-content: space-between; /* Pushes content to top and bottom */
+    text-align: center;
+    position: relative;
+}
+
+.content {
+    flex: 1;                      /* Takes available space in middle */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;      /* Keeps h1, p, christ image centered vertically */
+    padding: 20px;
+    z-index: 2;
+}
+
+/* Arrow near bottom center */
+#arrow {
+    width: 0;
+    height: 0;
+    border-left: 80px solid transparent;
+    border-right: 80px solid transparent;
+    border-bottom: 160px solid #ffd700;
+    margin: 20px auto 60px auto;   /* Adds bottom margin to lift it off the very edge */
+    transition: transform 0.3s ease-out;
+    filter: drop-shadow(0 0 10px rgba(255,215,0,0.7));
+    z-index: 3;
+}
+
+/* Optional: Make sure the note stays near bottom if needed */
+.note {
+    margin-top: auto;             /* Pushes note to bottom if content is short */
+    padding-bottom: 20px;
         }
     </style>
 </head>
@@ -78,7 +58,7 @@
     <div class="content">
         <h1>Turn Your Heart to the Temple</h1>
         
-        <p>Allow location and motion access.<br>Rotate your phone—the golden arrow will guide your gaze toward the Fort Worth Texas Temple.</p>
+        <!-- <p>Allow location and motion access.<br>Rotate your phone—the golden arrow will guide your gaze toward the Fort Worth Texas Temple.</p> -->
         
         <div id="arrow"></div>
         
@@ -158,5 +138,6 @@
     </script>
 </body>
 </html>
+
 
 
