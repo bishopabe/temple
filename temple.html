@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temple Direction Pointer</title>
+    <style>
+        body { 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            background-color: #f0f0f0; 
+            font-family: Arial, sans-serif; 
+        }
+        #arrow { 
+            width: 0; 
+            height: 0; 
+            border-left: 50px solid transparent; 
+            border-right: 50px solid transparent; 
+            border-bottom: 100px solid blue; 
+            transition: transform 0.1s; 
+        }
+        #message { 
+            margin-top: 20px; 
+            font-size: 20px; 
+            text-align: center; 
+        }
+        #distance { 
+            margin-top: 10px; 
+            font-size: 16px; 
+        }
+    </style>
+</head>
+<body>
+    <div id="arrow"></div>
+    <div id="message">Turn your sights to the temple</div>
+    <div id="distance"></div>
+
+    <script>
+        const templeLat = 32.51234;  // Replace with actual temple latitude
+        const templeLng = -97.36123; // Replace with actual temple longitude
+
+        let userLat, userLng, targetBearing;
+
+        // Function to calculate bearing between two points
+        function calculateBearing(lat1, lng1, lat2, lng2) {
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            lat1 = lat1 * Math.PI / 180;
+            lat2 = lat2 * Math.PI / 180;
+            const y = Math.sin(dLng) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+            let brng = Math.atan2(y, x) * 180 / Math.PI;
+            return (brng + 360) % 360;
+        }
+
+        // Function to calculate distance (in miles)
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const R = 3958.8; // Earth's radius in miles
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            lat1 = lat1 * Math.PI / 180;
+            lat2 = lat2 * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLng / 2) * Math.sin(dLng / 2) * Math.cos(lat1) * Math.cos(lat2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        // Get user's location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                userLat = position.coords.latitude;
+                userLng = position.coords.longitude;
+                targetBearing = calculateBearing(userLat, userLng, templeLat, templeLng);
+                const dist = calculateDistance(userLat, userLng, templeLat, templeLng).toFixed(1);
+                document.getElementById('distance').textContent = `The temple is ${dist} miles away.`;
+            }, error => {
+                alert('Please enable location access for this to work.');
+            });
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+
+        // Listen for device orientation changes
+        window.addEventListener('deviceorientationabsolute', event => {
+            if (targetBearing !== undefined) {
+                const heading = event.alpha || 0; // Device heading (0-360 degrees)
+                const rotation = targetBearing - heading;
+                document.getElementById('arrow').style.transform = `rotate(${rotation}deg)`;
+            }
+        });
+    </script>
+</body>
+</html>
